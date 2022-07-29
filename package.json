@@ -21,6 +21,7 @@
   },
   "homepage": "https://github.com/hariaakash/hybr1d-backend-assignment#readme",
   "dependencies": {
+    "argon2": "^0.28.7",
     "async": "^3.2.4",
     "helmet": "^5.1.1",
     "joi": "^17.6.0",
