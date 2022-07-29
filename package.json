@@ -23,7 +23,7 @@
     "moleculer-db": "^0.8.18",
     "moleculer-db-adapter-mongoose": "^0.8.13",
     "moleculer-web": "^0.10.4",
-    "mongoose": "^6.5.0",
+    "mongoose": "^5.6.3",
     "nanoid": "^4.0.0"
   }
 }
