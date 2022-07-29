@@ -24,6 +24,7 @@ module.exports = {
     },
   },
   actions: {
+    // Create user using email as unique field
     create: {
       params: () => Joi.object().keys({
         email: Joi.string().email().required(),
@@ -37,6 +38,7 @@ module.exports = {
         return this.createUser(ctx.params);
       },
     },
+    // Get specific user
     get: {
       params: () => Joi.object().keys({
         id: JOI_ID.required(),
@@ -51,6 +53,7 @@ module.exports = {
         return entity;
       },
     },
+    // Login user and throw error if email not found
     login: {
       params: () => Joi.object().keys({
         email: Joi.string().email().required(),
@@ -69,6 +72,7 @@ module.exports = {
         return entity;
       },
     },
+    // List user pagination style, used for seller listing
     paginatedList: {
       params: () => Joi.object().keys({
         page: Joi.number().default(1),
@@ -87,12 +91,14 @@ module.exports = {
     },
   },
   methods: {
+    // Filter password from any get actions
     filterParams(ctx, res) {
       const exclude = ['password', '__v'];
       if (res.rows) res.rows = res.rows.map((x) => _.omit(x, exclude));
       else res = _.omit(res.toObject(), exclude);
       return res;
     },
+    // Seed db with test data
     async seedDB() {
       try {
         const data = [

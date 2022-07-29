@@ -4,9 +4,11 @@ const {
 const { MoleculerError } = require('moleculer').Errors;
 
 const authorize = async (ctx, route, req) => {
+  // Check if token exists in header
   const auth = req.headers.authorization;
   if (!auth || !auth.startsWith('Bearer ')) throw new UnAuthorizedError(ERR_NO_TOKEN);
 
+  // Check if session is active
   ctx.meta.authkey = auth.slice(7);
   let session;
   try {
@@ -18,6 +20,7 @@ const authorize = async (ctx, route, req) => {
   }
   ctx.meta.session = session;
 
+  // Get user data from session
   ctx.meta.user = await ctx.call('user.get', { id: String(session.user) });
 
   // Route level restriction

@@ -16,6 +16,7 @@ module.exports = {
     fields: ['_id', 'name', 'price', 'seller', 'createdAt', 'updatedAt'],
   },
   actions: {
+    // Create Product
     create: {
       params: () => Joi.object().keys({
         id: JOI_ID.default(() => String(mongoose.Types.ObjectId())),
@@ -33,6 +34,7 @@ module.exports = {
         });
       },
     },
+    // Get specific product
     get: {
       params: () => Joi.object().keys({
         id: JOI_ID.required(),
@@ -48,6 +50,7 @@ module.exports = {
         return entity;
       },
     },
+    // Get products with list of id
     getByIds: {
       params: () => Joi.object().keys({
         ids: Joi.array().items(JOI_ID).required(),
@@ -60,6 +63,7 @@ module.exports = {
         return entity;
       },
     },
+    // Product list pagination style
     paginatedList: {
       params: () => Joi.object().keys({
         page: Joi.number().default(1),

@@ -15,6 +15,7 @@ module.exports = {
     fields: ['_id', 'authkey', 'user', 'ip', 'device', 'browser', 'expiresAt', 'status'],
   },
   actions: {
+    // Create session for specific user
     create: {
       params: () => Joi.object().keys({
         user: JOI_ID.required(),
@@ -30,6 +31,7 @@ module.exports = {
         return this.adapter.insert(entity);
       },
     },
+    // Check if session using token is expired or not
     check: {
       // cache: {
       // keys: ['#user.authkey'],
@@ -50,6 +52,7 @@ module.exports = {
         return res;
       },
     },
+    // Revoke the session using given token
     logout: {
       params: () => Joi.object().keys({
         authkey: JOI_AUTHKEY.required(),

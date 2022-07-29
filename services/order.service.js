@@ -16,6 +16,7 @@ module.exports = {
     fields: ['_id', 'products', 'items', 'total', 'buyer', 'seller', 'createdAt', 'updatedAt'],
   },
   actions: {
+    // Create order for list of items with a buyer and seller
     create: {
       params: () => Joi.object().keys({
         id: JOI_ID.default(() => String(mongoose.Types.ObjectId())),
@@ -39,6 +40,7 @@ module.exports = {
         });
       },
     },
+    // Get specific order
     get: {
       params: () => Joi.object().keys({
         id: JOI_ID.required(),
@@ -55,6 +57,7 @@ module.exports = {
         return entity;
       },
     },
+    // Get list of orders pagination style, with seller/buyer filter
     paginatedList: {
       params: () => Joi.object().keys({
         page: Joi.number().default(1),
