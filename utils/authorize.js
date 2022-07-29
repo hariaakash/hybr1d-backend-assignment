@@ -1,4 +1,6 @@
-const { UnAuthorizedError, ERR_INVALID_TOKEN, ERR_NO_TOKEN } = require('moleculer-web').Errors;
+const {
+  UnAuthorizedError, ERR_INVALID_TOKEN, ERR_NO_TOKEN, ForbiddenError,
+} = require('moleculer-web').Errors;
 const { MoleculerError } = require('moleculer').Errors;
 
 const authorize = async (ctx, route, req) => {
@@ -17,6 +19,10 @@ const authorize = async (ctx, route, req) => {
   ctx.meta.session = session;
 
   ctx.meta.user = await ctx.call('user.get', { id: String(session.user) });
+
+  // Route level restriction
+  if (req.originalUrl.startsWith('/seller') && ctx.meta.user.role !== 'seller') throw new UnAuthorizedError(ForbiddenError);
+  else if (req.originalUrl.startsWith('/buyer') && ctx.meta.user.role !== 'buyer') throw new UnAuthorizedError(ForbiddenError);
 };
 
 module.exports = authorize;
