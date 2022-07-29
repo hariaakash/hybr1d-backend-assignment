@@ -1,7 +1,7 @@
-const argon2 = require('argon2');
+const bcrypt = require('bcryptjs');
 
-const verify = async (hashData, password) => argon2.verify(hashData, password);
-const hash = async (password) => argon2.hash(password);
+const verify = async (hashData, password) => bcrypt.compare(password, hashData);
+const hash = async (password) => bcrypt.hash(password, 8);
 
 module.exports = {
   verify,
