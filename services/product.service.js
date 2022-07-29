@@ -13,7 +13,7 @@ module.exports = {
     DbMixin(model),
   ],
   settings: {
-    fields: ['_id', 'name', 'price', 'user', 'createdAt', 'updatedAt'],
+    fields: ['_id', 'name', 'price', 'seller', 'createdAt', 'updatedAt'],
   },
   actions: {
     create: {
@@ -21,10 +21,10 @@ module.exports = {
         id: JOI_ID.default(() => String(mongoose.Types.ObjectId())),
         name: Joi.string().required(),
         price: Joi.number().greater(0).required(),
-        user: JOI_ID.required(),
+        seller: JOI_ID.required(),
       }),
       async handler(ctx) {
-        const entity = await this.adapter.findOne({ ..._.pick(ctx.params, ['name', 'user']) });
+        const entity = await this.adapter.findOne({ ..._.pick(ctx.params, ['name', 'seller']) });
         if (entity) throw new MoleculerClientError('Product with name already exists', 422, 'CLIENT_VALIDATION');
 
         return this.adapter.insert({
@@ -36,10 +36,10 @@ module.exports = {
     get: {
       params: () => Joi.object().keys({
         id: JOI_ID.required(),
-        user: JOI_ID,
+        seller: JOI_ID,
       }),
       async handler(ctx) {
-        const query = { ..._.pick(ctx.params, ['user']) };
+        const query = { ..._.pick(ctx.params, ['seller']) };
         if (ctx.params.id) query._id = ctx.params.id;
 
         const entity = await this.adapter.model.findOne(query).lean();
@@ -56,7 +56,7 @@ module.exports = {
         search: Joi.string().default(''),
         searchFields: Joi.string().default('name'),
         query: Joi.object().keys({
-          user: JOI_ID,
+          seller: JOI_ID,
         }),
       }).min(1),
       async handler(ctx) {

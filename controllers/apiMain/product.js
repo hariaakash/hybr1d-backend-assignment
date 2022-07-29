@@ -16,9 +16,9 @@ module.exports = {
         const failed = [];
         await async.each(ctx.params.products, async (product) => {
           try {
-            await ctx.call('product.create', { ...product, user: String(ctx.meta.user._id) });
+            await ctx.call('product.create', { ...product, seller: String(ctx.meta.user._id) });
           } catch (err) {
-            failed.push(product);
+            failed.push({ product, message: err.message });
           }
         });
         return { message: 'Products created', failed };
@@ -27,7 +27,7 @@ module.exports = {
     'product-list': {
       async handler(ctx) {
         const { query = {} } = ctx.params;
-        query.user = String(ctx.meta.user._id);
+        query.product = String(ctx.meta.user._id);
         return ctx.call('product.paginatedList', { ...ctx.params, query });
       },
     },
