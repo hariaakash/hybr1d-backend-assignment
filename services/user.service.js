@@ -20,6 +20,7 @@ module.exports = {
       create: ['filterParams'],
       login: ['filterParams'],
       get: ['filterParams'],
+      paginatedList: ['filterParams'],
     },
   },
   actions: {
@@ -65,6 +66,22 @@ module.exports = {
           throw new MoleculerClientError('Wrong Password', 422, 'CLIENT_VALIDATION');
         }
 
+        return entity;
+      },
+    },
+    paginatedList: {
+      params: () => Joi.object().keys({
+        page: Joi.number().default(1),
+        pageSize: Joi.number().default(10),
+        sort: Joi.string().default(''),
+        search: Joi.string().default(''),
+        searchFields: Joi.string().default('email'),
+        query: Joi.object().keys({
+          role: Joi.string(),
+        }),
+      }).min(1),
+      async handler(ctx) {
+        const entity = await this.actions.list({ ...ctx.params });
         return entity;
       },
     },

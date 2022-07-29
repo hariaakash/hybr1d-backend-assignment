@@ -25,6 +25,13 @@ const authorizedRoutes = [
       'GET /product': 'apiMain.product-list',
     },
   },
+  {
+    path: '/buyer',
+    aliases: {
+      'GET /seller': 'apiMain.seller-list',
+      'GET /seller/:sellerId': 'apiMain.seller-products',
+    },
+  },
 ];
 
 const commonConfig = {
