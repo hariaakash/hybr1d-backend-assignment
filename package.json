@@ -2,7 +2,13 @@
   "name": "hybr1d-backend-assignment",
   "version": "1.0.0",
   "description": "",
-  "scripts": {},
+  "scripts": {
+    "start": "moleculer-runner services",
+    "dev": "moleculer-runner --hot services",
+    "local": "moleculer-runner --env --hot services",
+    "eslint:dry": "eslint . --quiet",
+    "eslint:fix": "eslint . --quiet --fix"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/hariaakash/hybr1d-backend-assignment.git"
