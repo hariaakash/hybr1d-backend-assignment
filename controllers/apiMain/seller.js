@@ -13,12 +13,5 @@ module.exports = {
         return data;
       },
     },
-    'seller-products': {
-      async handler(ctx) {
-        const { query = {} } = ctx.params;
-        query.seller = ctx.params.sellerId;
-        return ctx.call('product.paginatedList', { ...ctx.params, query });
-      },
-    },
   },
 };

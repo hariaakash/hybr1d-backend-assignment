@@ -1,34 +1,40 @@
 const Joi = require('joi');
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const { MoleculerError, MoleculerClientError } = require('moleculer').Errors;
+const { MoleculerError } = require('moleculer').Errors;
 
 const DbMixin = require('../mixins/mongo.adapter');
-const model = require('../models/Product');
+const model = require('../models/Order');
 const { JOI_ID } = require('../utils/joi.schema');
 
 module.exports = {
-  name: 'product',
+  name: 'order',
   mixins: [
     DbMixin(model),
   ],
   settings: {
-    fields: ['_id', 'name', 'price', 'seller', 'createdAt', 'updatedAt'],
+    fields: ['_id', 'products', 'items', 'total', 'buyer', 'seller', 'createdAt', 'updatedAt'],
   },
   actions: {
     create: {
       params: () => Joi.object().keys({
         id: JOI_ID.default(() => String(mongoose.Types.ObjectId())),
-        name: Joi.string().required(),
-        price: Joi.number().greater(0).required(),
+        products: Joi.array().items(
+          Joi.object().keys({
+            product: JOI_ID.required(),
+            price: Joi.number().greater(0).required(),
+            qty: Joi.number().greater(0).required(),
+            total: Joi.number().greater(0).required(),
+          }),
+        ).required(),
+        buyer: JOI_ID.required(),
         seller: JOI_ID.required(),
       }),
       async handler(ctx) {
-        const entity = await this.adapter.findOne({ ..._.pick(ctx.params, ['name', 'seller']) });
-        if (entity) throw new MoleculerClientError('Product with name already exists', 422, 'CLIENT_VALIDATION');
-
         return this.adapter.insert({
           _id: ctx.params.id,
+          items: ctx.params.products.length,
+          total: ctx.params.products.reduce((acc, x) => acc + x.total, 0),
           ...ctx.params,
         });
       },
@@ -36,27 +42,16 @@ module.exports = {
     get: {
       params: () => Joi.object().keys({
         id: JOI_ID.required(),
+        buyer: JOI_ID,
         seller: JOI_ID,
       }),
       async handler(ctx) {
-        const query = { ..._.pick(ctx.params, ['seller']) };
+        const query = { ..._.pick(ctx.params, ['buyer', 'seller']) };
         if (ctx.params.id) query._id = ctx.params.id;
 
         const entity = await this.adapter.model.findOne(query).lean();
-        if (!entity) throw new MoleculerError('Product not found', 404, 'NOT_FOUND');
+        if (!entity) throw new MoleculerError('Order not found', 404, 'NOT_FOUND');
 
-        return entity;
-      },
-    },
-    getByIds: {
-      params: () => Joi.object().keys({
-        ids: Joi.array().items(JOI_ID).required(),
-        seller: JOI_ID,
-      }),
-      async handler(ctx) {
-        const query = { _id: { $in: ctx.params.ids }, ..._.pick(ctx.params, ['seller']) };
-
-        const entity = await this.adapter.model.find(query);
         return entity;
       },
     },
@@ -66,9 +61,10 @@ module.exports = {
         pageSize: Joi.number().default(10),
         sort: Joi.string().default(''),
         search: Joi.string().default(''),
-        searchFields: Joi.string().default('name'),
+        searchFields: Joi.string().default(''),
         query: Joi.object().keys({
           seller: JOI_ID,
+          buyer: JOI_ID,
         }),
       }).min(1),
       async handler(ctx) {

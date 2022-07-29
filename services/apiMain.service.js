@@ -9,7 +9,7 @@ module.exports = {
   name: 'apiMain',
   mixins: [ApiGateway, RouterSettings, Service],
   settings: {
-    services: ['user', 'session', 'product'],
+    services: ['user', 'session', 'product', 'order'],
     port: process.env.PORT || 3000,
     cors: {
       methods: ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'PATCH', 'POST', 'PUT'],

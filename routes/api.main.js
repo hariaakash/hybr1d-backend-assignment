@@ -23,13 +23,16 @@ const authorizedRoutes = [
     aliases: {
       'POST /product': 'apiMain.product-create',
       'GET /product': 'apiMain.product-list',
+      'GET /order': 'apiMain.order-bySeller',
     },
   },
   {
     path: '/buyer',
     aliases: {
       'GET /seller': 'apiMain.seller-list',
-      'GET /seller/:sellerId': 'apiMain.seller-products',
+      'GET /seller/:seller': 'apiMain.product-bySeller',
+      'POST /order/:seller': 'apiMain.order-create',
+      'GET /order': 'apiMain.order-byBuyer',
     },
   },
 ];

@@ -27,7 +27,14 @@ module.exports = {
     'product-list': {
       async handler(ctx) {
         const { query = {} } = ctx.params;
-        query.product = String(ctx.meta.user._id);
+        query.seller = String(ctx.meta.user._id);
+        return ctx.call('product.paginatedList', { ...ctx.params, query });
+      },
+    },
+    'product-bySeller': {
+      async handler(ctx) {
+        const { query = {} } = ctx.params;
+        query.seller = ctx.params.seller;
         return ctx.call('product.paginatedList', { ...ctx.params, query });
       },
     },
