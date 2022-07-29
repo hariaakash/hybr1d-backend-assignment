@@ -27,6 +27,7 @@ module.exports = {
       params: () => Joi.object().keys({
         email: Joi.string().email().required(),
         password: Joi.string().min(8).required(),
+        role: Joi.string().valid('buyer', 'seller').required(),
       }),
       async handler(ctx) {
         const found = await this.adapter.findOne({ email: ctx.params.email });
@@ -79,8 +80,14 @@ module.exports = {
       try {
         const data = [
           {
-            email: 'hari@badat.tech',
+            email: 'seller@gmail.com',
             password: 'haha1234',
+            role: 'seller',
+          },
+          {
+            email: 'buyer@gmail.com',
+            password: 'haha1234',
+            role: 'buyer',
           },
         ];
         await data.forEach(async (x) => {
