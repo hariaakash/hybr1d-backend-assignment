@@ -8,7 +8,7 @@ const PasswordManager = require('../utils/password.manager');
 const { JOI_ID } = require('../utils/joi.schema');
 
 module.exports = {
-  name: 'stock',
+  name: 'user',
   mixins: [
     DbMixin(model),
   ],
@@ -29,10 +29,10 @@ module.exports = {
         password: Joi.string().min(8).required(),
       }),
       async handler(ctx) {
-        return this.adapter.insert({
-          ...ctx.params,
-          password: await PasswordManager.hash(ctx.params.password),
-        });
+        const found = await this.adapter.findOne({ email: ctx.params.email });
+        if (found) throw new MoleculerClientError('User with email already exists', 422, 'CLIENT_VALIDATION');
+
+        return this.createUser(ctx.params);
       },
     },
     get: {
@@ -75,8 +75,28 @@ module.exports = {
       else res = _.omit(res.toObject(), exclude);
       return res;
     },
+    async seedDB() {
+      try {
+        const data = [
+          {
+            email: 'hari@badat.tech',
+            password: 'haha1234',
+          },
+        ];
+        await data.forEach(async (x) => {
+          const found = await this.adapter.findOne({ email: x.email });
+          if (!found) await this.createUser(x);
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    },
+    async createUser(data) {
+      data.password = await PasswordManager.hash(data.password);
+      return this.adapter.insert({ ...data });
+    },
   },
   async created() {
-    // await this.actions.seed();
+    await this.seedDB();
   },
 };

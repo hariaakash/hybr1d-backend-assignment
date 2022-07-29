@@ -14,12 +14,6 @@ module.exports = {
   settings: {
     fields: ['_id', 'authkey', 'user', 'ip', 'device', 'browser', 'expiresAt', 'status'],
   },
-  hooks: {
-    after: {
-      create: ['filterParams'],
-      check: ['filterParams'],
-    },
-  },
   actions: {
     create: {
       params: () => Joi.object().keys({

@@ -1,26 +1,42 @@
 const RouterHooks = require('../utils/hooks.router');
 
-const publicRoutes = [];
+const publicRoutes = [
+  {
+    path: '/public',
+    aliases: {
+      'POST /create': 'apiMain.user-create',
+      'POST /login': 'apiMain.user-login',
+    },
+  },
+];
 
-const authorizedRoutes = [];
+const authorizedRoutes = [
+  {
+    path: '/user',
+    aliases: {
+      'GET /': 'apiMain.user-me',
+      'DELETE /': 'apiMain.user-logout',
+    },
+  },
+];
+
+const commonConfig = {
+  mappingPolicy: 'restrict',
+  ...RouterHooks,
+  bodyParsers: {
+    json: true,
+  },
+};
 
 module.exports = [
   ...publicRoutes.map((x) => ({
     ...x,
+    ...commonConfig,
     authorization: false,
-    mappingPolicy: 'restrict',
-    ...RouterHooks,
-    bodyParsers: {
-      json: true,
-    },
   })),
   ...authorizedRoutes.map((x) => ({
     ...x,
+    ...commonConfig,
     authorization: true,
-    mappingPolicy: 'restrict',
-    ...RouterHooks,
-    bodyParsers: {
-      json: true,
-    },
   })),
 ];

@@ -1,3 +1,7 @@
+const user = require('./user');
+
 module.exports = {
-  mixins: [],
+  mixins: [
+    user,
+  ],
 };
