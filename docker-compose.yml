@@ -1,0 +1,53 @@
+version: '3.8'
+
+networks:
+    micros:
+        driver: overlay
+    db:
+        driver: overlay
+    # cache:
+    #     driver: overlay
+
+volumes:
+    db:
+        driver: local
+    # cache:
+    #     driver: local
+
+services:
+    app:
+        build: .
+        image: hybrid_app:dev
+        command: npm run dev
+        ports:
+            - 3000:3000
+        environment:
+            NODE_ENV: development
+            ADAPTER: mongodb://mongodb:27017/hybrid
+            LOGLEVEL: debug
+            # REDIS_HOST: redis
+            # REDIS_PORT: 6379
+        volumes:
+            - .:/app
+        networks:
+            - micros
+            - db
+            # - cache
+
+    mongodb:
+        image: bitnami/mongodb:4.4
+        ports:
+            - 27017:27017
+        volumes:
+            - db:/bitnami/mongodb
+        networks:
+            - db
+
+    # redis:
+    #     image: redis:6.2-alpine
+    #     ports:
+    #         - 6379:6379
+    #     volumes:
+    #         - cache:/bitnami/mongodb
+    #     networks:
+    #         - cache
