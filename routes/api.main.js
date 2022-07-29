@@ -18,6 +18,13 @@ const authorizedRoutes = [
       'DELETE /': 'apiMain.user-logout',
     },
   },
+  {
+    path: '/seller',
+    aliases: {
+      'POST /product': 'apiMain.product-create',
+      'GET /product': 'apiMain.product-list',
+    },
+  },
 ];
 
 const commonConfig = {

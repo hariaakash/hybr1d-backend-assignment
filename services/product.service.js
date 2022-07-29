@@ -1,7 +1,7 @@
 const Joi = require('joi');
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const { MoleculerError } = require('moleculer').Errors;
+const { MoleculerError, MoleculerClientError } = require('moleculer').Errors;
 
 const DbMixin = require('../mixins/mongo.adapter');
 const model = require('../models/Product');
@@ -24,8 +24,8 @@ module.exports = {
         user: JOI_ID.required(),
       }),
       async handler(ctx) {
-        const found = await this.adapter.findOne({ ..._.pick(ctx.params, ['name', 'user']) });
-        if (found) return found;
+        const entity = await this.adapter.findOne({ ..._.pick(ctx.params, ['name', 'user']) });
+        if (entity) throw new MoleculerClientError('Product with name already exists', 422, 'CLIENT_VALIDATION');
 
         return this.adapter.insert({
           _id: ctx.params.id,
